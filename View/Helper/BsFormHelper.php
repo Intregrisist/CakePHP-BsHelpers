@@ -165,7 +165,7 @@ class BsFormHelper extends FormHelper {
      */
     protected function _getCol() {
         if($this->_getFormType() == 'horizontal') {
-            return 'col-med' . $this->__left;
+            return 'col-med-' . $this->__left;
         }
 
         return '';
