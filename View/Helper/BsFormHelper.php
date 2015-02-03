@@ -158,6 +158,19 @@ class BsFormHelper extends FormHelper {
 		$this->_actionForm = $val;
 	}
 
+    /**
+     * Returns the column class.
+     *
+     * @return string
+     */
+    protected function _getCol() {
+        if($this->_getFormType() == 'horizontal') {
+            return 'col-med' . $this->__left;
+        }
+
+        return '';
+    }
+
 /**
  * Returns an HTML FORM element.
  *
@@ -285,18 +298,18 @@ class BsFormHelper extends FormHelper {
 		//----- [label] option
 		if (!isset($options['label'])) {
 			if ($this->_getFormType() == 'horizontal' || ($date && $formType == 'horizontal')) {
-				$options['label'] = array('class' => 'control-label col-md-' . $this->__left);
+				$options['label'] = array('class' => 'control-label ' . $this->_getCol());
 			} else {
 				$options['label'] = array('class' => 'control-label sr-only');
 			}
 		} elseif ($options['label'] != false) {
 			if (!is_array($options['label'])) {
-				$options['label'] = array('class' => 'control-label col-md-' . $this->__left, 'text' => $options['label']);
+				$options['label'] = array('class' => 'control-label ' . $this->_getCol(), 'text' => $options['label']);
 			} else {
 				if (isset($options['label']['class'])) {
-					$options['label']['class'] .= ' control-label col-md-' . $this->__left;
+					$options['label']['class'] .= ' control-label ' . $this->_getCol();
 				} else {
-					$options['label']['class'] = 'control-label col-md-' . $this->__left;
+					$options['label']['class'] = 'control-label ' . $this->_getCol();
 				}
 			}
 		}
@@ -613,7 +626,7 @@ class BsFormHelper extends FormHelper {
 			$out .= '<div class="form-group">';
 			//----- [label] attribute
 			if (isset($attributes['label']) && !empty($attributes['label'])) {
-				$out .= '<label class="control-label col-md-' . $this->__left . '">' . $attributes['label'] . '</label>';
+				$out .= '<label class="control-label ' . $this->_getCol() . '">' . $attributes['label'] . '</label>';
 				$out .= '<div class="col-md-' . $this->__right . '">';
 			} else {
 				$out .= '<div class="col-md-offset-' . $this->__left . ' col-md-' . $this->__right . '">';
@@ -700,7 +713,7 @@ class BsFormHelper extends FormHelper {
 
 			//----- [label] attribute
 			if (isset($attributes['label']) && !empty($attributes['label'])) {
-				$out .= '<label class="control-label col-md-' . $this->__left . '">' . $attributes['label'] . '</label>';
+				$out .= '<label class="control-label ' . $this->_getCol() . '">' . $attributes['label'] . '</label>';
 				$out .= '<div class="col-md-' . $this->__right . '">';
 			} else {
 				$out .= '<div class="col-md-offset-' . $this->__left . ' col-md-' . $this->__right . '">';
