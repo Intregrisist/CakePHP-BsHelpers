@@ -164,7 +164,7 @@ class BsFormHelper extends FormHelper {
      * @return string
      */
     protected function _getCol() {
-        if($this->_getFormType() == 'horizontal') {
+        if($this->_getFormType() == 'horizontal' || $this->_getFormType() == 'inline') {
             return 'col-med-' . $this->__left;
         }
 
@@ -197,8 +197,13 @@ class BsFormHelper extends FormHelper {
 				$this->setFormType('inline');
 			}
 		} else {
-			$options['class'] = 'form-horizontal';
-			$this->setFormType('horizontal');
+            if($this->_getFormType() == 'horizontal') {
+                $options['class'] = 'form-horizontal';
+            } elseif($this->_getFormType() == 'inline') {
+                $options['class'] = 'form-inline';
+            } else {
+                $this->setFormType('stacked');
+            }
 		}
 
 		$this->_setModelForm($model);
