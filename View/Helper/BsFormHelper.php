@@ -43,11 +43,11 @@ class BsFormHelper extends FormHelper {
 	private $__right = 9;
 
 /**
- * Defines the type of form being created, horizontal form or inline form. Set by BsFormHelper::create()
+ * Defines the type of form being created: stacked, horizontal, or inline form. Can be set by BsFormHelper::create()
  *
  * @var string
  */
-	protected $_typeForm = 'horizontal';
+	protected $_typeForm = 'stacked';
 
 /**
  * Defines the model of form being created. Set by BsFormHelper::create()
@@ -159,16 +159,41 @@ class BsFormHelper extends FormHelper {
 	}
 
     /**
-     * Returns the column class.
+     * Returns the left column class OR the offset.
      *
+     * @param bool $offset
      * @return string
      */
-    protected function _getCol() {
+    protected function _getLeftCol($offset = false) {
+        $out = '';
         if($this->_getFormType() == 'horizontal' || $this->_getFormType() == 'inline') {
-            return 'col-med-' . $this->__left;
+            if($offset) {
+                $out .= 'col-md-offset-' . $this->__right;
+            } else {
+                $out .= 'col-md-' . $this->__left;
+            }
         }
 
-        return '';
+        return $out;
+    }
+
+    /**
+     * Returns the right column class OR the offset.
+     *
+     * @param bool $offset
+     * @return string
+     */
+    protected function _getRightCol($offset = false) {
+        $out = '';
+        if($this->_getFormType() == 'horizontal' || $this->_getFormType() == 'inline') {
+            if($offset) {
+                $out .= 'col-md-offset-' . $this->__left;
+            } else {
+                $out .= 'col-md-' . $this->__right;
+            }
+        }
+
+        return $out;
     }
 
 /**
@@ -244,6 +269,7 @@ class BsFormHelper extends FormHelper {
  * @return string Completed form widget.
  */
 	public function input($fieldName, $options = array()) {
+        $parsedOptions = $this->_parseOptions($options);
 		$formType = $this->_getFormType();
 		// If we have a 'state', record then delete from the array
 		if (isset($options['state'])) {
@@ -301,20 +327,24 @@ class BsFormHelper extends FormHelper {
 		}
 
 		//----- [label] option
+        if($label = parent::_getLabel($fieldName, $parsedOptions)) {
+            $options['label'] = $label;
+        }
+
 		if (!isset($options['label'])) {
 			if ($this->_getFormType() == 'horizontal' || ($date && $formType == 'horizontal')) {
-				$options['label'] = array('class' => 'control-label ' . $this->_getCol());
+				$options['label'] = array('class' => 'control-label ' . $this->_getLeftCol());
 			} else {
 				$options['label'] = array('class' => 'control-label sr-only');
 			}
 		} elseif ($options['label'] != false) {
 			if (!is_array($options['label'])) {
-				$options['label'] = array('class' => 'control-label ' . $this->_getCol(), 'text' => $options['label']);
+				$options['label'] = array('class' => 'control-label ' . $this->_getLeftCol(), 'text' => $options['label']);
 			} else {
 				if (isset($options['label']['class'])) {
-					$options['label']['class'] .= ' control-label ' . $this->_getCol();
+					$options['label']['class'] .= ' control-label ' . $this->_getLeftCol();
 				} else {
-					$options['label']['class'] = 'control-label ' . $this->_getCol();
+					$options['label']['class'] = 'control-label ' . $this->_getLeftCol();
 				}
 			}
 		}
@@ -322,7 +352,7 @@ class BsFormHelper extends FormHelper {
 		//----- [between], [after] and [help] options
 		if ($this->_getFormType() == 'horizontal' || ($date && $formType == 'horizontal')) {
 			if (!isset($options['between'])) {
-				$options['between'] = '<div class="col-md-' . $this->__right;
+				$options['between'] = '<div class="' . $this->_getRightCol();
 				$options['between'] .= ($options['label'] == false) ? ' col-md-offset-' . $this->__left : '';
 				$options['between'] .= '">';
 			}
@@ -357,7 +387,7 @@ class BsFormHelper extends FormHelper {
  * @return string Input-group de Bootstrap
  */
 	public function inputGroup($fieldName, $addonOptions, $options = array()) {
-		$between = '<div class="col-md-' . $this->__right . ' col-md-offset-' . $this->__left . '">';
+		$between = '<div class="' . $this->_getRightCol() . ' ' . $this->_getRightCol(true) . '">';
 		$between .= '<div class="input-group">';
 
 		// Check if the addon is on the right
@@ -552,7 +582,7 @@ class BsFormHelper extends FormHelper {
 
 		if ($this->_getFormType() == 'horizontal' && !isset($options['inline'])) {
 			$out .= '<div class="form-group">';
-			$out .= '<div class="col-md-offset-' . $this->__left . ' col-md-' . $this->__right . '">';
+			$out .= '<div class="' . $this->_getRightCol(true) . ' ' . $this->_getRightCol() . '">';
 		}
 
 		//----- [help] option for multiple checkboxes ([label] is an array)
@@ -626,21 +656,21 @@ class BsFormHelper extends FormHelper {
 			$attributes['empty'] = false;
 		}
 
-		if ($this->_getFormType() == 'horizontal') {
+		if ($this->_getFormType() == 'horizontal' || $this->_getFormType() == 'stacked') {
 
 			$out .= '<div class="form-group">';
 			//----- [label] attribute
 			if (isset($attributes['label']) && !empty($attributes['label'])) {
-				$out .= '<label class="control-label ' . $this->_getCol() . '">' . $attributes['label'] . '</label>';
-				$out .= '<div class="col-md-' . $this->__right . '">';
+				$out .= '<label class="control-label ' . $this->_getLeftCol() . '">' . $attributes['label'] . '</label>';
+				$out .= '<div class="' . $this->_getRightCol() . '">';
 			} else {
-				$out .= '<div class="col-md-offset-' . $this->__left . ' col-md-' . $this->__right . '">';
+				$out .= '<div class="' . $this->_getRightCol(true) . ' ' . $this->_getRightCol() . '">';
 			}
 		}
 
 		$out .= parent::select($fieldName, $options, $attributes);
 
-		if ($this->_getFormType() == 'horizontal') {
+        if ($this->_getFormType() == 'horizontal' || $this->_getFormType() == 'stacked') {
 			//----- [help] attribute
 			if (isset($attributes['help']) && !empty($attributes['help'])) {
 				$out .= '<span class="help-block">' . $attributes['help'] . '</span>';
@@ -718,10 +748,10 @@ class BsFormHelper extends FormHelper {
 
 			//----- [label] attribute
 			if (isset($attributes['label']) && !empty($attributes['label'])) {
-				$out .= '<label class="control-label ' . $this->_getCol() . '">' . $attributes['label'] . '</label>';
-				$out .= '<div class="col-md-' . $this->__right . '">';
+				$out .= '<label class="control-label ' . $this->_getLeftCol() . '">' . $attributes['label'] . '</label>';
+				$out .= '<div class="' . $this->_getRightCol() . '">';
 			} else {
-				$out .= '<div class="col-md-offset-' . $this->__left . ' col-md-' . $this->__right . '">';
+				$out .= '<div class="' . $this->_getRightCol(true) . ' ' . $this->_getRightCol() . '">';
 			}
 
 			$out .= '<div class="radio">';
@@ -767,9 +797,9 @@ class BsFormHelper extends FormHelper {
 	public function submit($caption = null, $options = array()) {
 		$out = '';
 
-		if ($this->_getFormType() == 'horizontal') {
+		if ($this->_getFormType() == 'horizontal' || $this->_getFormType() == 'stacked') {
 			$out .= '<div class="form-group">';
-			$out .= '<div class="col-md-offset-' . $this->__left . ' col-md-' . $this->__right . '">';
+			$out .= '<div class="' . $this->_getRightCol(true) . ' ' . $this->_getRightCol() . '">';
 		}
 
 		//----- [div] option
@@ -817,7 +847,7 @@ class BsFormHelper extends FormHelper {
 			$out .= '</script>';
 		}
 
-		if ($this->_getFormType() == 'horizontal') {
+        if ($this->_getFormType() == 'horizontal' || $this->_getFormType() == 'stacked') {
 			$out .= '</div></div>';
 		}
 
