@@ -1,9 +1,33 @@
-<?php 
+<?php
 
-// First Form
+$animals = array(
+    'dog' => 'Dog',
+    'cat' => 'Cat',
+    'rabbit' => 'Rabbit'
+);
+$status = array(
+    0 => 'No',
+    1 => 'Yes'
+);
 
+// Stacked - Set by default
+//$this->BsForm->setFormType('stacked');
+echo '<div class="container">'.
+    '<h2>Stacked Form</h2>'.
+    $this->BsForm->create('ModelA').
+        $this->BsForm->input('First name').
+        $this->BsForm->inputGroup('User.email', array('content' => '@', 'class' => 'addon-mail'), array('label' => 'E-mail')).
+        $this->BsForm->checkbox('User.notifications', array('label' => 'Do you want notifications ?', 'checked' => 'checked')).
+        $this->BsForm->select('User.animal', $animals, array('label' => "What's your favorite animal ?", 'help' => 'Only one can be chosen')).
+        $this->BsForm->radio('User.married', $status, array('label' => 'Are you married ?')).
+        $this->BsForm->submit('Send').
+    $this->BsForm->end();
+echo '</div>';
+
+
+// Horizontal Form
+$this->BsForm->setFormType('horizontal');
 echo '<br/>'.
-
 '<div class="container">'.
 	'<div class="row">'.
 		'<div class="col-xs-12">'.
