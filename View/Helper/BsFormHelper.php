@@ -369,7 +369,7 @@ class BsFormHelper extends FormHelper {
 		if ($this->_isFormType(array('horizontal', 'stacked')) || ($date && $formType == 'horizontal')) {
 			if (!isset($options['between'])) {
 				$options['between'] = '<div class="' . $this->_getRightCol();
-				$options['between'] .= ($options['label'] == false) ? ' col-md-offset-' . $this->__left : '';
+				$options['between'] .= ($options['label'] == false) ? ' ' . $this->_getRightCol(true) : '';
 				$options['between'] .= '">';
 			}
 			if ($options['after'] == '</div>') {
