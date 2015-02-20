@@ -16,7 +16,7 @@ Ensure require is present in composer.json. This will install the plugin into Pl
 ```json
 {
 	"require": {
-		"webandcow/bs_helpers": "*"
+		"intregrisist/bs_helpers": "*"
 	}
 }
 ```
